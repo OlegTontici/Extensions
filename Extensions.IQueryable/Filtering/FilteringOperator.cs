@@ -59,6 +59,11 @@ namespace Extensions.IQueryable.Filtering
             return result;
         }
 
+        public static IEnumerable<FilteringOperator> GetAll()
+        {
+            return Operators.Values;
+        }
+
         public override string ToString()
         {
             return DisplayName;
@@ -74,11 +79,6 @@ namespace Extensions.IQueryable.Filtering
         public static implicit operator string(FilteringOperator filteringOperator)
         {
             return filteringOperator.DisplayName;
-        }
-
-        public IEnumerable<FilteringOperator> GetAll()
-        {
-            return Operators.Values;
         }
     }
 }

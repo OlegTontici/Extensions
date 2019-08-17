@@ -7,15 +7,25 @@ namespace Extensions.IQueryable.Filtering
         public FilteringOperator Operator { get; }
         public object SearchValue { get; }
 
-        public Filter(string propertyName, FilteringOperator @operator, object searchValue)
+        public Filter(string propertyName, FilteringOperator filteringOperator, object searchValue)
         {
             if (string.IsNullOrWhiteSpace(propertyName))
             {
-                throw new ArgumentException($"{propertyName} can not be empty");
+                throw new ArgumentException($"{propertyName} can not be empty", nameof(propertyName));
+            }
+
+            if(filteringOperator == null)
+            {
+                throw new ArgumentNullException(nameof(filteringOperator));
+            }
+
+            if (searchValue == null)
+            {
+                throw new ArgumentNullException(nameof(searchValue));
             }
 
             PropertyName = propertyName;
-            Operator = @operator;
+            Operator = filteringOperator;
             SearchValue = searchValue;
         }
     }

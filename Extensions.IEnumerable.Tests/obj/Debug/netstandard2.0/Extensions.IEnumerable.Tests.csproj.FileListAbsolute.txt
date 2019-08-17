@@ -1,9 +1,0 @@
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\bin\Debug\netstandard2.0\Extensions.IEnumerable.Tests.deps.json
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\bin\Debug\netstandard2.0\Extensions.IEnumerable.Tests.dll
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\bin\Debug\netstandard2.0\Extensions.IEnumerable.Tests.pdb
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\obj\Debug\netstandard2.0\Extensions.IEnumerable.Tests.csprojAssemblyReference.cache
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\obj\Debug\netstandard2.0\Extensions.IEnumerable.Tests.csproj.CoreCompileInputs.cache
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\obj\Debug\netstandard2.0\Extensions.IEnumerable.Tests.AssemblyInfoInputs.cache
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\obj\Debug\netstandard2.0\Extensions.IEnumerable.Tests.AssemblyInfo.cs
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\obj\Debug\netstandard2.0\Extensions.IEnumerable.Tests.dll
-D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable.Tests\obj\Debug\netstandard2.0\Extensions.IEnumerable.Tests.pdb

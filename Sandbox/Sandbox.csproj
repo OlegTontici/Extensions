@@ -49,6 +49,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Extensions.IEnumerable\Extensions.IEnumerable.csproj">
+      <Project>{f887c9b2-75fd-49ce-8ca1-f2495d417c74}</Project>
+      <Name>Extensions.IEnumerable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Extensions.IQueryable\Extensions.IQueryable.csproj">
       <Project>{0D605438-0E55-4364-BF62-E201D6CC8E8A}</Project>
       <Name>Extensions.IQueryable</Name>

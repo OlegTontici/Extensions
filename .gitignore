@@ -4,3 +4,7 @@ Extensions/obj/
 Sandbox/bin/
 Sandbox/obj/
 Extensions/bin/
+Extensions.IQueryable.Tests/obj/
+Extensions.IQueryable.Tests/bin/
+Extensions.IEnumerable.Tests/bin/
+Extensions.IEnumerable.Tests/obj/
