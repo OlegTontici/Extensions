@@ -1,0 +1,9 @@
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\bin\Debug\netstandard2.0\Extensions.IQueryable.deps.json
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\bin\Debug\netstandard2.0\Extensions.IQueryable.dll
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\bin\Debug\netstandard2.0\Extensions.IQueryable.pdb
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\obj\Debug\netstandard2.0\Extensions.IQueryable.csprojAssemblyReference.cache
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\obj\Debug\netstandard2.0\Extensions.IQueryable.csproj.CoreCompileInputs.cache
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\obj\Debug\netstandard2.0\Extensions.IQueryable.AssemblyInfoInputs.cache
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\obj\Debug\netstandard2.0\Extensions.IQueryable.AssemblyInfo.cs
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\obj\Debug\netstandard2.0\Extensions.IQueryable.dll
+D:\Projects\ReusableUsefullStuff\Extensions.IQueryable\obj\Debug\netstandard2.0\Extensions.IQueryable.pdb

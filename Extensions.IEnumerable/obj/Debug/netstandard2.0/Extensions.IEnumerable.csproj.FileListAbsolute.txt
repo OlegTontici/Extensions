@@ -1,0 +1,9 @@
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\bin\Debug\netstandard2.0\Extensions.IEnumerable.deps.json
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\bin\Debug\netstandard2.0\Extensions.IEnumerable.dll
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\bin\Debug\netstandard2.0\Extensions.IEnumerable.pdb
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\obj\Debug\netstandard2.0\Extensions.IEnumerable.csprojAssemblyReference.cache
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\obj\Debug\netstandard2.0\Extensions.IEnumerable.csproj.CoreCompileInputs.cache
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\obj\Debug\netstandard2.0\Extensions.IEnumerable.AssemblyInfoInputs.cache
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\obj\Debug\netstandard2.0\Extensions.IEnumerable.AssemblyInfo.cs
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\obj\Debug\netstandard2.0\Extensions.IEnumerable.dll
+D:\Projects\ReusableUsefullStuff\Extensions.IEnumerable\obj\Debug\netstandard2.0\Extensions.IEnumerable.pdb

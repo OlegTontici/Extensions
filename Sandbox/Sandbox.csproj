@@ -49,9 +49,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Extensions.csproj">
-      <Project>{FED526E3-95E3-4957-8356-73A3CD222964}</Project>
-      <Name>Extensions</Name>
+    <ProjectReference Include="..\Extensions.IQueryable\Extensions.IQueryable.csproj">
+      <Project>{0D605438-0E55-4364-BF62-E201D6CC8E8A}</Project>
+      <Name>Extensions.IQueryable</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

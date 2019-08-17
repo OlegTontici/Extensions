@@ -9,10 +9,16 @@ namespace Extensions.IQueryable
 {
     public static class IQueryableExtensions
     {
-        public static IQueryable<T> Paginated<T>(this IQueryable<T> source, PaginationInfo paginationInfo)
+        public static PaginationResult<T> Paginated<T>(this IQueryable<T> source, PaginationInfo paginationInfo)
         {
-            return source.Skip((paginationInfo.CurrentPage - 1) * paginationInfo.PageSize).Take(paginationInfo.PageSize);
+            var data = source.Skip((paginationInfo.CurrentPage - 1) * paginationInfo.PageSize).Take(paginationInfo.PageSize).ToList();
+
+            var paginatedResult = new PaginationResult<T>(data, source.Count(), paginationInfo.PageSize, paginationInfo.CurrentPage);
+
+            return paginatedResult;
         }
+
+
 
         public static IQueryable<T> FilterBy<T>(this IQueryable<T> source, params Filter[] filters)
         {

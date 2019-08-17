@@ -1,10 +1,8 @@
 ﻿using Extensions.IQueryable.Filtering;
 using Extensions.IQueryable;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Extensions.IQueryable.Pagination;
 
 namespace Sandbox
 {
@@ -30,11 +28,12 @@ namespace Sandbox
                     Make = "Bmw"
                 }
             }.AsQueryable();
+            
 
-            Filter filter = new Filter("Price", FilteringOperators.LessThan, 31);
-            Filter filter2 = new Filter("Make", FilteringOperators.Equal, "Audi");
+            Filter filter = new Filter("Price", FilteringOperator.LessThan, 31);
+            Filter filter2 = new Filter("Make", FilteringOperator.Equal, "Audi");
 
-            var result = cars.FilterBy(filter, filter2);
+            var result = cars.FilterBy(filter).Paginated(new PaginationInfo(1, 1));
         }
     }
 
