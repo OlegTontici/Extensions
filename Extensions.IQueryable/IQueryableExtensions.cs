@@ -67,12 +67,13 @@ namespace Extensions.IQueryable
                 var searchValueExpression = Expression.Constant(filter.SearchValue);
 
                 var typeFilteringExpressions = FilteringExpressions[type];
-                var filteringExpression = typeFilteringExpressions[filter.Operator];
 
-                if (filteringExpression == null)
+                if (!typeFilteringExpressions.ContainsKey(filter.Operator))
                 {
                     throw new ArgumentException($"Operator '{filter.Operator}' can not be applied to the type {type.FullName}");
                 }
+
+                var filteringExpression = typeFilteringExpressions[filter.Operator];                
 
                 return filteringExpression(memberAccessExpression, searchValueExpression);
             };
@@ -94,7 +95,7 @@ namespace Extensions.IQueryable
                     {
                         var propertyToStringExpression = Expression.Call(memberAccessExpression, typeof(object).GetMethod("ToString"));
                         var searchValueToStringExpression = Expression.Call(searchValueExpression, typeof(object).GetMethod("ToString"));
-                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("StartsWith"), searchValueToStringExpression);
+                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }), searchValueToStringExpression);
                     }
                 },
             };
@@ -119,7 +120,7 @@ namespace Extensions.IQueryable
                     {
                         var propertyToStringExpression = Expression.Call(memberAccessExpression, typeof(object).GetMethod("ToString"));
                         var searchValueToStringExpression = Expression.Call(searchValueExpression, typeof(object).GetMethod("ToString"));
-                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("StartsWith"), searchValueToStringExpression);
+                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }), searchValueToStringExpression);
                     }
                 },
             };
