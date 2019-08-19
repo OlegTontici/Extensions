@@ -26,7 +26,7 @@ namespace Extensions.IEnumerable
             }
         }
 
-        public static T FirstOrDefaultRecursive<T>(this IEnumerable<T> source, Predicate<T> predicate, Func<T, IEnumerable<T>> childSelector)
+        public static T FirstOrDefaultRecursive<T>(this IEnumerable<T> source, Predicate<T> predicate, Func<T, IEnumerable<T>> childrenSelector)
         {
             foreach (var item in source)
             {
@@ -37,7 +37,7 @@ namespace Extensions.IEnumerable
                 }
                 else
                 {
-                    var result = childSelector(item).FirstOrDefaultRecursive(predicate, childSelector);
+                    var result = childrenSelector(item).FirstOrDefaultRecursive(predicate, childrenSelector);
                     if (result == null)
                     {
                         continue;
