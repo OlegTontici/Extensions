@@ -8,3 +8,7 @@ Extensions.IQueryable.Tests/obj/
 Extensions.IQueryable.Tests/bin/
 Extensions.IEnumerable.Tests/bin/
 Extensions.IEnumerable.Tests/obj/
+Extensions.IEnumerable/bin/
+Extensions.IEnumerable/obj/
+Extensions.IQueryable/obj/
+Extensions.IQueryable/bin/
