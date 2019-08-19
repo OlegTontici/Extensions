@@ -1,9 +1,0 @@
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\bin\Debug\netstandard2.0\Extensions.IQueryable.Tests.deps.json
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\bin\Debug\netstandard2.0\Extensions.IQueryable.Tests.dll
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\bin\Debug\netstandard2.0\Extensions.IQueryable.Tests.pdb
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\obj\Debug\netstandard2.0\Extensions.IQueryable.Tests.csprojAssemblyReference.cache
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\obj\Debug\netstandard2.0\Extensions.IQueryable.Tests.csproj.CoreCompileInputs.cache
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\obj\Debug\netstandard2.0\Extensions.IQueryable.Tests.AssemblyInfoInputs.cache
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\obj\Debug\netstandard2.0\Extensions.IQueryable.Tests.AssemblyInfo.cs
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\obj\Debug\netstandard2.0\Extensions.IQueryable.Tests.dll
-D:\Projects\ReusableUsefullStuff\Extensions.IQueryable.Tests\obj\Debug\netstandard2.0\Extensions.IQueryable.Tests.pdb
