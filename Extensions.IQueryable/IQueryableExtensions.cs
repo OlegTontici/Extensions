@@ -60,17 +60,41 @@ namespace Extensions.IQueryable
         {
             return (parameterExpression, filter) =>
             {
+                var searchValue = filter.SearchValue;
+
+                var searchValueType = filter.SearchValue.GetType();
+
+                if (searchValueType != type)
+                {
+                    bool searchValueCanBeConverted = TypesSupportedConversion.ContainsKey(searchValueType) && TypesSupportedConversion[searchValueType].Any(t => t == type);
+
+                    if (!searchValueCanBeConverted)
+                    {
+                        throw new Exception($"Types missmatch. Property {filter.PropertyName} type of {type} can not be compared against the search value type of {searchValueType}");
+                    }
+
+                    try
+                    {
+                        var convertedSearchValue = Convert.ChangeType(filter.SearchValue, type);
+                        searchValue = convertedSearchValue;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Type conversion failed. Value '{searchValue}' can not be converted to the type {type} of the property {filter.PropertyName}");
+                    }
+                }
+
                 var memberAccessExpression = Expression.Property(parameterExpression, filter.PropertyName);
-                var searchValueExpression = Expression.Constant(filter.SearchValue);
+                var searchValueExpression = Expression.Constant(searchValue);
 
                 var typeFilteringExpressions = FilteringExpressions[type];
 
                 if (!typeFilteringExpressions.ContainsKey(filter.Operator))
                 {
                     throw new ArgumentException($"Operator '{filter.Operator}' can not be applied to the type {type.FullName}");
-                }
+                }              
 
-                var filteringExpression = typeFilteringExpressions[filter.Operator];                
+                var filteringExpression = typeFilteringExpressions[filter.Operator];
 
                 return filteringExpression(memberAccessExpression, searchValueExpression);
             };
@@ -130,14 +154,21 @@ namespace Extensions.IQueryable
                 { FilteringOperator.LessThan, (memberAccessExpression, searchValueExpression) => Expression.LessThan(memberAccessExpression, searchValueExpression) },
                 { FilteringOperator.LessThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.LessThanOrEqual(memberAccessExpression, searchValueExpression) },
                 { FilteringOperator.GreaterThan, (memberAccessExpression, searchValueExpression) => Expression.GreaterThan(memberAccessExpression, searchValueExpression) },
-                { FilteringOperator.GreaterThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.GreaterThanOrEqual(memberAccessExpression, searchValueExpression) },                
+                { FilteringOperator.GreaterThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.GreaterThanOrEqual(memberAccessExpression, searchValueExpression) },
             };
 
         private static readonly Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>> BooleansFilteringExpressions =
             new Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>>
             {
                 { FilteringOperator.Equal, (memberAccessExpression, searchValueExpression) => Expression.Equal(memberAccessExpression, searchValueExpression) },
-                { FilteringOperator.NotEqual, (memberAccessExpression, searchValueExpression) => Expression.NotEqual(memberAccessExpression, searchValueExpression) }                
+                { FilteringOperator.NotEqual, (memberAccessExpression, searchValueExpression) => Expression.NotEqual(memberAccessExpression, searchValueExpression) }
+            };
+
+        private static readonly Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>> GuidFilteringExpressions =
+            new Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>>
+            {
+                { FilteringOperator.Equal, (memberAccessExpression, searchValueExpression) => Expression.Equal(memberAccessExpression, searchValueExpression) },
+                { FilteringOperator.NotEqual, (memberAccessExpression, searchValueExpression) => Expression.NotEqual(memberAccessExpression, searchValueExpression) }
             };
 
         private static readonly Dictionary<Type, Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>>> FilteringExpressions =
@@ -148,7 +179,19 @@ namespace Extensions.IQueryable
                 { typeof(decimal), NumbersFilteringExpressions },
                 { typeof(double), NumbersFilteringExpressions },
                 { typeof(DateTime), DatesFilteringExpressions},
-                { typeof(bool), BooleansFilteringExpressions }
+                { typeof(bool), BooleansFilteringExpressions },
+                { typeof(Guid), GuidFilteringExpressions }
             };
+
+        // TODO to add support for string to guid conversion
+        private static readonly Dictionary<Type, IEnumerable<Type>> TypesSupportedConversion = new Dictionary<Type, IEnumerable<Type>>
+        {
+            { typeof(decimal), new List<Type> { typeof(double), typeof(string) } },
+            { typeof(double), new List<Type> { typeof(decimal), typeof(string) } },
+            { typeof(int), new List<Type> { typeof(double), typeof(decimal), typeof(string) } },
+            { typeof(string), new List<Type> { typeof(decimal), typeof(double), typeof(int), typeof(DateTime) } },
+            { typeof(DateTime), new List<Type> { typeof(string) } },
+            { typeof(Guid), new List<Type> { typeof(string) } }
+        };
     }
 }

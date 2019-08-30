@@ -9,6 +9,7 @@ namespace Extensions.IQueryable.Tests
 {
     public class Car
     {
+        public Guid Id { get; set; }
         public decimal Price { get; set; }
         public string Make { get; set; }
         public DateTime ProductionDate { get; set; }
@@ -28,6 +29,7 @@ namespace Extensions.IQueryable.Tests
     {
         private static readonly Car bmw = new Car
         {
+            Id = Guid.NewGuid(),
             Make = "BMW",
             Price = 15000,
             ProductionDate = new DateTime(2018, 04, 04),
@@ -35,6 +37,7 @@ namespace Extensions.IQueryable.Tests
         };
         private static readonly Car toyota = new Car
         {
+            Id = Guid.NewGuid(),
             Make = "Toyota",
             Price = 20000,
             ProductionDate = new DateTime(2017, 04, 04),
@@ -42,6 +45,7 @@ namespace Extensions.IQueryable.Tests
         };
         private static readonly Car renault = new Car
         {
+            Id = Guid.NewGuid(),
             Make = "Renault",
             Price = 6000,
             ProductionDate = new DateTime(2014, 04, 04),
@@ -323,14 +327,14 @@ namespace Extensions.IQueryable.Tests
         public void Should_Throw_ArgumentException_When_Contains_Filter_Is_Applied_On_DateTime_Type()
         {
             // Act and Assert
-            Assert.ThrowsException<ArgumentException>(() => cars.FilterBy(new Filter(nameof(Car.ProductionDate), FilteringOperator.Contains, bmw.Make)).ToList());
+            Assert.ThrowsException<ArgumentException>(() => cars.FilterBy(new Filter(nameof(Car.ProductionDate), FilteringOperator.Contains, DateTime.Now)).ToList());
         }
 
         [TestMethod]
         public void Should_Throw_ArgumentException_When_StartsWith_Filter_Is_Applied_On_DateTime_Type()
         {
             // Act and Assert
-            Assert.ThrowsException<ArgumentException>(() => cars.FilterBy(new Filter(nameof(Car.ProductionDate), FilteringOperator.StartsWith, bmw.Make)).ToList());
+            Assert.ThrowsException<ArgumentException>(() => cars.FilterBy(new Filter(nameof(Car.ProductionDate), FilteringOperator.StartsWith, DateTime.Now)).ToList());
         }
         #endregion
 
@@ -352,12 +356,39 @@ namespace Extensions.IQueryable.Tests
         public void Should_Correctly_Apply_NotEqual_Filter_On_Bool_Type()
         {
             // Act
-            var result = cars.FilterBy(new Filter(nameof(Car.IsSecondHand), FilteringOperator.Equal, false)).ToList();
+            var result = cars.FilterBy(new Filter(nameof(Car.IsSecondHand), FilteringOperator.NotEqual, true)).ToList();
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(result.Count(), 1);
             Assert.AreEqual(result.Count(c => c.Equals(toyota)), 1);
+        }
+        #endregion
+
+        #region type Guid
+        [TestMethod]
+        public void Should_Correctly_Apply_Equal_Filter_On_Guid_Type()
+        {
+            // Act
+            var result = cars.FilterBy(new Filter(nameof(Car.Id), FilteringOperator.Equal, bmw.Id)).ToList();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Count(), 1);
+            Assert.AreEqual(result.Count(c => c.Equals(bmw)), 1);
+        }
+
+        [TestMethod]
+        public void Should_Correctly_Apply_NotEqual_Filter_On_Guid_Type()
+        {
+            // Act
+            var result = cars.FilterBy(new Filter(nameof(Car.Id), FilteringOperator.NotEqual, bmw.Id)).ToList();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Count(), 2);
+            Assert.AreEqual(result.Count(c => c.Equals(toyota)), 1);
+            Assert.AreEqual(result.Count(c => c.Equals(renault)), 1);
         }
         #endregion
     }
