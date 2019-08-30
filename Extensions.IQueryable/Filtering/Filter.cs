@@ -19,11 +19,6 @@ namespace Extensions.IQueryable.Filtering
                 throw new ArgumentNullException(nameof(filteringOperator));
             }
 
-            if (searchValue == null)
-            {
-                throw new ArgumentNullException(nameof(searchValue));
-            }
-
             PropertyName = propertyName;
             Operator = filteringOperator;
             SearchValue = searchValue;

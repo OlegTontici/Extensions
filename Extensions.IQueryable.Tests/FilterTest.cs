@@ -68,26 +68,5 @@ namespace Extensions.IQueryable.Tests
             Assert.IsNotNull(expectedException);
             Assert.AreEqual(expectedException.ParamName, "filteringOperator");
         }
-
-        [TestMethod]
-        public void Throw_ArgumentNullException_Once_Initialized_With_Null_SearchValue()
-        {
-            // Arrange
-            ArgumentNullException expectedException = null;
-
-            // Act
-            try
-            {
-                new Filter("propName", FilteringOperator.Equal, null);
-            }
-            catch (ArgumentNullException ex)
-            {
-                expectedException = ex;
-            }
-
-            // Assert
-            Assert.IsNotNull(expectedException);
-            Assert.AreEqual(expectedException.ParamName, "searchValue");
-        }
     }
 }

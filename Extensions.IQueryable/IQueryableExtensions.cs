@@ -62,9 +62,9 @@ namespace Extensions.IQueryable
             {
                 var searchValue = filter.SearchValue;
 
-                var searchValueType = filter.SearchValue.GetType();
+                var searchValueType = filter.SearchValue?.GetType();
 
-                if (searchValueType != type)
+                if (searchValueType != null && searchValueType != type)
                 {
                     bool searchValueCanBeConverted = TypesSupportedConversion.ContainsKey(searchValueType) && TypesSupportedConversion[searchValueType].Any(t => t == type);
 
@@ -106,17 +106,25 @@ namespace Extensions.IQueryable
                 { FilteringOperator.Equal, (memberAccessExpression, searchValueExpression) => Expression.Equal(memberAccessExpression, searchValueExpression) },
                 { FilteringOperator.NotEqual, (memberAccessExpression, searchValueExpression) => Expression.NotEqual(memberAccessExpression, searchValueExpression) },
                 { FilteringOperator.Contains, (memberAccessExpression, searchValueExpression) =>
-                    {
-                        var propertyToStringExpression = Expression.Call(memberAccessExpression, typeof(object).GetMethod("ToString"));
-                        var searchValueToStringExpression = Expression.Call(searchValueExpression, typeof(object).GetMethod("ToString"));
-                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("Contains"), searchValueToStringExpression);
+                    {           
+                        if(searchValueExpression.Value == null)
+                        {
+                            throw new ArgumentNullException("Search value", $"'Contains' filtering does not support null arguments");
+                        }
+
+                        var coalesceExpression = Expression.Coalesce(memberAccessExpression, Expression.Constant(string.Empty));
+                        return Expression.Call(coalesceExpression, typeof(string).GetMethod("Contains"), searchValueExpression);
                     }
                 },
                 { FilteringOperator.StartsWith, (memberAccessExpression, searchValueExpression) =>
                     {
-                        var propertyToStringExpression = Expression.Call(memberAccessExpression, typeof(object).GetMethod("ToString"));
-                        var searchValueToStringExpression = Expression.Call(searchValueExpression, typeof(object).GetMethod("ToString"));
-                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }), searchValueToStringExpression);
+                        if (searchValueExpression.Value == null)
+                        {
+                            throw new ArgumentNullException("Search value", $"'StartsWith' filtering does not support null arguments");
+                        }
+
+                        var coalesceExpression = Expression.Coalesce(memberAccessExpression, Expression.Constant(string.Empty));
+                        return Expression.Call(coalesceExpression, typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }), searchValueExpression);
                     }
                 },
             };
@@ -129,21 +137,7 @@ namespace Extensions.IQueryable
                 { FilteringOperator.LessThan, (memberAccessExpression, searchValueExpression) => Expression.LessThan(memberAccessExpression, searchValueExpression) },
                 { FilteringOperator.LessThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.LessThanOrEqual(memberAccessExpression, searchValueExpression) },
                 { FilteringOperator.GreaterThan, (memberAccessExpression, searchValueExpression) => Expression.GreaterThan(memberAccessExpression, searchValueExpression) },
-                { FilteringOperator.GreaterThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.GreaterThanOrEqual(memberAccessExpression, searchValueExpression) },
-                { FilteringOperator.Contains, (memberAccessExpression, searchValueExpression) =>
-                    {
-                        var propertyToStringExpression = Expression.Call(memberAccessExpression, typeof(object).GetMethod("ToString"));
-                        var searchValueToStringExpression = Expression.Call(searchValueExpression, typeof(object).GetMethod("ToString"));
-                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("Contains"), searchValueToStringExpression);
-                    }
-                },
-                { FilteringOperator.StartsWith, (memberAccessExpression, searchValueExpression) =>
-                    {
-                        var propertyToStringExpression = Expression.Call(memberAccessExpression, typeof(object).GetMethod("ToString"));
-                        var searchValueToStringExpression = Expression.Call(searchValueExpression, typeof(object).GetMethod("ToString"));
-                        return Expression.Call(propertyToStringExpression, typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }), searchValueToStringExpression);
-                    }
-                },
+                { FilteringOperator.GreaterThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.GreaterThanOrEqual(memberAccessExpression, searchValueExpression) }
             };
 
         private static readonly Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>> DatesFilteringExpressions =

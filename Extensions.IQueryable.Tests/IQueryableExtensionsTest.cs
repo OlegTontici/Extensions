@@ -220,31 +220,7 @@ namespace Extensions.IQueryable.Tests
             Assert.AreEqual(result.Count(), 2);
             Assert.AreEqual(result.Count(c => c.Equals(toyota)), 1);
             Assert.AreEqual(result.Count(c => c.Equals(bmw)), 1);
-        }
-
-        [TestMethod]
-        public void Should_Correctly_Apply_Contains_Filter_On_Decimal_Type()
-        {
-            // Act
-            var result = cars.FilterBy(new Filter(nameof(Car.Price), FilteringOperator.Contains, 6)).ToList();
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.Count(), 1);
-            Assert.AreEqual(result.Count(c => c.Equals(renault)), 1);
-        }
-
-        [TestMethod]
-        public void Should_Correctly_Apply_StartsWith_Filter_On_Decimal_Type()
-        {
-            // Act
-            var result = cars.FilterBy(new Filter(nameof(Car.Price), FilteringOperator.StartsWith, 6)).ToList();
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.Count(), 1);
-            Assert.AreEqual(result.Count(c => c.Equals(renault)), 1);
-        }
+        }        
         #endregion
 
         #region type DateTime
