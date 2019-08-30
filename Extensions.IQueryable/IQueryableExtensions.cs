@@ -9,14 +9,11 @@ namespace Extensions.IQueryable
 {
     public static class IQueryableExtensions
     {
-        public static PaginationResult<T> Paginated<T>(this IQueryable<T> source, PaginationInfo paginationInfo)
+        public static IQueryable<T> Paginated<T>(this IQueryable<T> source, PaginationInfo paginationInfo)
         {
-            // not async (
-            var data = source.Skip((paginationInfo.CurrentPage - 1) * paginationInfo.PageSize).Take(paginationInfo.PageSize).ToList();
+            var paginatedQuery = source.Skip((paginationInfo.CurrentPage - 1) * paginationInfo.PageSize).Take(paginationInfo.PageSize);
 
-            var paginatedResult = new PaginationResult<T>(data, source.Count(), paginationInfo.PageSize, paginationInfo.CurrentPage);
-
-            return paginatedResult;
+            return paginatedQuery;
         }
 
 
@@ -136,6 +133,13 @@ namespace Extensions.IQueryable
                 { FilteringOperator.GreaterThanOrEqual, (memberAccessExpression, searchValueExpression) => Expression.GreaterThanOrEqual(memberAccessExpression, searchValueExpression) },                
             };
 
+        private static readonly Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>> BooleansFilteringExpressions =
+            new Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>>
+            {
+                { FilteringOperator.Equal, (memberAccessExpression, searchValueExpression) => Expression.Equal(memberAccessExpression, searchValueExpression) },
+                { FilteringOperator.NotEqual, (memberAccessExpression, searchValueExpression) => Expression.NotEqual(memberAccessExpression, searchValueExpression) }                
+            };
+
         private static readonly Dictionary<Type, Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>>> FilteringExpressions =
             new Dictionary<Type, Dictionary<string, Func<MemberExpression, ConstantExpression, Expression>>>
             {
@@ -143,7 +147,8 @@ namespace Extensions.IQueryable
                 { typeof(int), NumbersFilteringExpressions },
                 { typeof(decimal), NumbersFilteringExpressions },
                 { typeof(double), NumbersFilteringExpressions },
-                { typeof(DateTime), DatesFilteringExpressions}
+                { typeof(DateTime), DatesFilteringExpressions},
+                { typeof(bool), BooleansFilteringExpressions }
             };
     }
 }

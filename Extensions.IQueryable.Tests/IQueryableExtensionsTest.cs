@@ -12,8 +12,8 @@ namespace Extensions.IQueryable.Tests
         public decimal Price { get; set; }
         public string Make { get; set; }
         public DateTime ProductionDate { get; set; }
+        public bool IsSecondHand { get; set; }
 
-        // override object.Equals
         public bool Equals(Car obj)
         {
             return obj != null &&
@@ -30,39 +30,40 @@ namespace Extensions.IQueryable.Tests
         {
             Make = "BMW",
             Price = 15000,
-            ProductionDate = new DateTime(2018, 04, 04)
+            ProductionDate = new DateTime(2018, 04, 04),
+            IsSecondHand = true
         };
         private static readonly Car toyota = new Car
         {
             Make = "Toyota",
             Price = 20000,
-            ProductionDate = new DateTime(2017, 04, 04)
+            ProductionDate = new DateTime(2017, 04, 04),
+            IsSecondHand = false
         };
         private static readonly Car renault = new Car
         {
             Make = "Renault",
             Price = 6000,
-            ProductionDate = new DateTime(2014, 04, 04)
+            ProductionDate = new DateTime(2014, 04, 04),
+            IsSecondHand = true
         };
         private static IQueryable<Car> cars = new List<Car>
         {
             bmw, toyota, renault
         }.AsQueryable();
 
-        #region type string
         [TestMethod]
         public void Should_Correctly_Paginate_ProvidedData()
         {
             // Act
-            var paginationResult = cars.AsQueryable().Paginated(new PaginationInfo(2, 2));
+            var paginatedQuery = cars.AsQueryable().Paginated(new PaginationInfo(2, 2));
+            var result = paginatedQuery.ToList();
 
             // Assert
-            Assert.AreEqual(paginationResult.TotalRecords, cars.Count());
-            Assert.AreEqual(paginationResult.CurrentPage, 2);
-            Assert.AreEqual(paginationResult.PageSize, 2);
-            Assert.IsTrue(paginationResult.Data.SequenceEqual(new List<Car> { cars.Last() }));
+            Assert.IsTrue(result.SequenceEqual(new List<Car> { cars.Last() }));
         }
 
+        #region type string
         [TestMethod]
         public void Should_Correctly_Apply_Equal_Filter_On_String_Type()
         {
@@ -330,6 +331,33 @@ namespace Extensions.IQueryable.Tests
         {
             // Act and Assert
             Assert.ThrowsException<ArgumentException>(() => cars.FilterBy(new Filter(nameof(Car.ProductionDate), FilteringOperator.StartsWith, bmw.Make)).ToList());
+        }
+        #endregion
+
+        #region type bool
+        [TestMethod]
+        public void Should_Correctly_Apply_Equal_Filter_On_Bool_Type()
+        {
+            // Act
+            var result = cars.FilterBy(new Filter(nameof(Car.IsSecondHand), FilteringOperator.Equal, true)).ToList();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Count(), 2);
+            Assert.AreEqual(result.Count(c => c.Equals(bmw)), 1);
+            Assert.AreEqual(result.Count(c => c.Equals(renault)), 1);
+        }
+
+        [TestMethod]
+        public void Should_Correctly_Apply_NotEqual_Filter_On_Bool_Type()
+        {
+            // Act
+            var result = cars.FilterBy(new Filter(nameof(Car.IsSecondHand), FilteringOperator.Equal, false)).ToList();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Count(), 1);
+            Assert.AreEqual(result.Count(c => c.Equals(toyota)), 1);
         }
         #endregion
     }
