@@ -23,6 +23,7 @@ namespace Extensions.IQueryable.Filtering
         public static FilteringOperator GreaterThanOrEqual => new FilteringOperator(5, ">=");
         public static FilteringOperator Contains => new FilteringOperator(6, "Contains");
         public static FilteringOperator StartsWith => new FilteringOperator(7, "StartsWith");
+        public static FilteringOperator EndsWith => new FilteringOperator(8, "EndsWith");
 
         private static readonly Dictionary<int, FilteringOperator> Operators = new Dictionary<int, FilteringOperator>
         {
@@ -34,6 +35,7 @@ namespace Extensions.IQueryable.Filtering
             { GreaterThanOrEqual.Value, GreaterThanOrEqual },
             { Contains.Value, Contains },
             { StartsWith.Value, StartsWith },
+            { EndsWith.Value, EndsWith },
         };
 
         public static FilteringOperator FromValue(int operatorValue)

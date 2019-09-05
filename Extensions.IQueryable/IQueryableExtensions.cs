@@ -37,11 +37,20 @@ namespace Extensions.IQueryable
 
             ParameterExpression parameterExpression = Expression.Parameter(typeof(T), "x");
 
-            var whereExpressionBody = filters.Aggregate<Filter, Expression>(Expression.Constant(true), (currentExpression, filter) =>
+            var whereExpressionBody = filters.Reverse().Aggregate<Filter, Expression>(null, (currentExpression, filter) =>
             {
                 var propertyType = typeof(T).GetProperty(filter.PropertyName).PropertyType;
-                var filteringExpression = GetFilteringExpression(propertyType);
-                return Expression.AndAlso(currentExpression, filteringExpression(parameterExpression, filter));
+                var getFilteringExpression = GetFilteringExpression(propertyType);
+                var filteringExpression = getFilteringExpression(parameterExpression, filter);
+
+                if (currentExpression == null)
+                {
+                    return filteringExpression;
+                }
+
+                var expression = filter.Connect(currentExpression, filteringExpression);
+
+                return expression;
             });
 
             MethodCallExpression whereMethodCallExpression = Expression.Call(
@@ -125,6 +134,17 @@ namespace Extensions.IQueryable
 
                         var coalesceExpression = Expression.Coalesce(memberAccessExpression, Expression.Constant(string.Empty));
                         return Expression.Call(coalesceExpression, typeof(string).GetMethod("StartsWith", new Type[]{ typeof(string) }), searchValueExpression);
+                    }
+                },
+                { FilteringOperator.EndsWith, (memberAccessExpression, searchValueExpression) =>
+                    {
+                        if (searchValueExpression.Value == null)
+                        {
+                            throw new ArgumentNullException("Search value", $"'EndsWith' filtering does not support null arguments");
+                        }
+
+                        var coalesceExpression = Expression.Coalesce(memberAccessExpression, Expression.Constant(string.Empty));
+                        return Expression.Call(coalesceExpression, typeof(string).GetMethod("EndsWith", new Type[]{ typeof(string) }), searchValueExpression);
                     }
                 },
             };
