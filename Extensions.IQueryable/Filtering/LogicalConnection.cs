@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 
 namespace Extensions.IQueryable.Filtering
 {
@@ -8,6 +9,17 @@ namespace Extensions.IQueryable.Filtering
 
         public static LogicalConnection Or => new LogicalConnectionOr();
         public static LogicalConnection And => new LogicalConnectionAnd();
+
+        public static LogicalConnection From(string logicalConnection)
+        {
+            switch (logicalConnection)
+            {
+                case "Or": return Or;
+                case "And": return And;
+                default:
+                    throw new ArgumentException($"Logical connection {logicalConnection} is not supported");
+            }
+        }
     }
 
     public class LogicalConnectionOr : LogicalConnection

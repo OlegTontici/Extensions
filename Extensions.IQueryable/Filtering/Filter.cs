@@ -8,7 +8,7 @@ namespace Extensions.IQueryable.Filtering
         public string PropertyName { get; }
         public FilteringOperator Operator { get; }
         public object SearchValue { get; }
-        public LogicalConnection LogicalConnection { get; private set; }
+        public LogicalConnection LogicalConnection { get; }
 
         public Filter(string propertyName, FilteringOperator filteringOperator, object searchValue, LogicalConnection logicalConnection)
         {
@@ -34,6 +34,18 @@ namespace Extensions.IQueryable.Filtering
         }
 
         public Filter(string propertyName, FilteringOperator filteringOperator, object searchValue) : this(propertyName, filteringOperator, searchValue, LogicalConnection.And)
+        {
+
+        }
+
+        public Filter(string propertyName, string filteringOperator, object searchValue, string logicalConnection) : 
+            this(propertyName, FilteringOperator.FromDisplayName(filteringOperator), searchValue, LogicalConnection.From(logicalConnection))
+        {
+
+        }
+
+        public Filter(string propertyName, string filteringOperator, object searchValue) :
+            this(propertyName, FilteringOperator.FromDisplayName(filteringOperator), searchValue)
         {
 
         }
