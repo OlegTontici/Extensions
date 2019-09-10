@@ -7,19 +7,19 @@ namespace Extensions.IQueryable.Filtering
 {
     public abstract class Filter
     {
-        public abstract FilteringExpression ToFilteringExpression(ParameterExpression parameterExpression);       
+        public abstract FilteringExpression ToFilteringExpression(ParameterExpression parameterExpression);
 
-        public static SimpleFilter Simple (string propertyName, FilteringOperator filteringOperator, object searchValue, LogicalConnection logicalConnection)
+        public static SimpleFilter Simple(LogicalConnection logicalConnection, string propertyName, FilteringOperator filteringOperator, object searchValue)
         {
-            return new SimpleFilter(propertyName, filteringOperator, searchValue, logicalConnection);
+            return new SimpleFilter(logicalConnection, propertyName, filteringOperator, searchValue);
         }
         public static SimpleFilter Simple(string propertyName, FilteringOperator filteringOperator, object searchValue)
         {
             return new SimpleFilter(propertyName, filteringOperator, searchValue);
         }
-        public static SimpleFilter Simple(string propertyName, string filteringOperator, object searchValue, string logicalConnection)
+        public static SimpleFilter Simple(string logicalConnection, string propertyName, string filteringOperator, object searchValue)
         {
-            return new SimpleFilter(propertyName, filteringOperator, searchValue, logicalConnection);
+            return new SimpleFilter(logicalConnection, propertyName, filteringOperator, searchValue);
         }
         public static SimpleFilter Simple(string propertyName, string filteringOperator, object searchValue)
         {
@@ -39,7 +39,7 @@ namespace Extensions.IQueryable.Filtering
         public object SearchValue { get; }
         public LogicalConnection LogicalConnection { get; }
 
-        public SimpleFilter(string propertyName, FilteringOperator filteringOperator, object searchValue, LogicalConnection logicalConnection)
+        public SimpleFilter(LogicalConnection logicalConnection, string propertyName, FilteringOperator filteringOperator, object searchValue)
         {
             if (string.IsNullOrWhiteSpace(propertyName))
             {
@@ -62,13 +62,13 @@ namespace Extensions.IQueryable.Filtering
             LogicalConnection = logicalConnection;
         }
 
-        public SimpleFilter(string propertyName, FilteringOperator filteringOperator, object searchValue) : this(propertyName, filteringOperator, searchValue, LogicalConnection.And)
+        public SimpleFilter(string propertyName, FilteringOperator filteringOperator, object searchValue) : this(LogicalConnection.And, propertyName, filteringOperator, searchValue)
         {
 
         }
 
-        public SimpleFilter(string propertyName, string filteringOperator, object searchValue, string logicalConnection) :
-            this(propertyName, FilteringOperator.FromDisplayName(filteringOperator), searchValue, LogicalConnection.From(logicalConnection))
+        public SimpleFilter(string logicalConnection, string propertyName, string filteringOperator, object searchValue) :
+            this(LogicalConnection.From(logicalConnection), propertyName, FilteringOperator.FromDisplayName(filteringOperator), searchValue)
         {
 
         }
@@ -130,7 +130,7 @@ namespace Extensions.IQueryable.Filtering
             var filteringExpression = Operator.ToExpression(memberAccessExpression, searchValueExpression);
 
             return filteringExpression;
-        }       
+        }
 
         // TODO to add support for string to guid conversion
         private static readonly Dictionary<Type, IEnumerable<Type>> TypesSupportedConversion = new Dictionary<Type, IEnumerable<Type>>
