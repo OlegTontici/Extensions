@@ -9,6 +9,8 @@ namespace Extensions.IQueryable.Filtering
 
         public static LogicalConnection Or => new LogicalConnectionOr();
         public static LogicalConnection And => new LogicalConnectionAnd();
+        public abstract BinaryExpressionShape GetExpression();
+        public delegate BinaryExpression BinaryExpressionShape(Expression expression1, Expression expression2);
 
         public static LogicalConnection From(string logicalConnection)
         {
@@ -30,6 +32,11 @@ namespace Extensions.IQueryable.Filtering
 
             return result;
         }
+
+        public override BinaryExpressionShape GetExpression()
+        {
+            return Expression.OrElse;
+        }
     }
 
     public class LogicalConnectionAnd : LogicalConnection
@@ -39,6 +46,11 @@ namespace Extensions.IQueryable.Filtering
             var result = Expression.AndAlso(expression1, expression2);
 
             return result;
+        }
+
+        public override BinaryExpressionShape GetExpression()
+        {
+            return Expression.AndAlso;
         }
     }
 }
