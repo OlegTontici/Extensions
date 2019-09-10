@@ -4,8 +4,8 @@ namespace Extensions.IQueryable.Filtering
 {
     public class FilteringExpression
     {
-        private Expression Expression { get; }
-        private LogicalConnection.BinaryExpressionShape LogicalConnection { get; }
+        public Expression Expression { get; }
+        public LogicalConnection.BinaryExpressionShape LogicalConnection { get; }
 
         public FilteringExpression(Expression expression, LogicalConnection.BinaryExpressionShape logicalConnection)
         {
@@ -25,6 +25,11 @@ namespace Extensions.IQueryable.Filtering
         public static implicit operator Expression(FilteringExpression filteringExpression)
         {
             return filteringExpression.Expression;
+        }
+
+        public FilteringExpression WithLogicalConnection(LogicalConnection.BinaryExpressionShape logicalConnection)
+        {
+            return new FilteringExpression(Expression, logicalConnection);
         }
     }
 }

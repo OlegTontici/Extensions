@@ -172,7 +172,7 @@ namespace Extensions.IQueryable.Filtering
                 filteringExpression = filteringExpression.ConnectTo(currentExpression, parameterExpression);
             }
 
-            return filteringExpression;
+            return filteringExpression.WithLogicalConnection(LogicalConnection.GetExpression());
         }
     }
 }

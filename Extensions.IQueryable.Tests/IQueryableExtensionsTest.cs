@@ -85,8 +85,9 @@ namespace Extensions.IQueryable.Tests
 
             var result = cars.FilterBy(
                 new SimpleFilter(LogicalConnection.Or, nameof(Car.Make), FilteringOperator.Equal, bmw.Make),
-                new ScopedFilter(LogicalConnection.And, Filter.Simple(LogicalConnection.And, nameof(Car.Make), FilteringOperator.Equal, toyota.Make),
-                                                        Filter.Simple(LogicalConnection.And, nameof(Car.Price), FilteringOperator.Equal, 200))).ToList();
+                new ScopedFilter(LogicalConnection.Or, new SimpleFilter(LogicalConnection.And, nameof(Car.Make), FilteringOperator.Equal, toyota.Make),
+                                                        new SimpleFilter(LogicalConnection.And, nameof(Car.Price), FilteringOperator.Equal, 200)), 
+                new SimpleFilter(LogicalConnection.And, nameof(Car.Make), FilteringOperator.Contains, "R")).ToList();
 
             //    var result = cars.FilterBy(new Filter(nameof(Car.Make), FilteringOperator.Equal, bmw.Make, LogicalConnection.Or),
             //new Filter(nameof(Car.Make), FilteringOperator.Equal, toyota.Make, LogicalConnection.And),
