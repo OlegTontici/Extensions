@@ -1,7 +1,6 @@
 ﻿using Extensions.IQueryable.Filtering;
 using Extensions.IQueryable.Pagination;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -16,8 +15,6 @@ namespace Extensions.IQueryable
             return paginatedQuery;
         }
 
-
-
         public static IQueryable<T> FilterBy<T>(this IQueryable<T> source, params Filter[] filters)
         {
             if (!filters.Any())
@@ -25,21 +22,11 @@ namespace Extensions.IQueryable
                 return source;
             }
 
-            foreach (var filter in filters)
-            {
-                //var propertyMetadata = typeof(T).GetProperty(filter.PropertyName);
-
-                //if (propertyMetadata == null)
-                //{
-                //    throw new ArgumentException($"Property {filter.PropertyName} does not exist on type {typeof(T).FullName}");
-                //}
-            }
-
             ParameterExpression parameterExpression = Expression.Parameter(typeof(T), "x");
 
             var whereExpressionBody = filters.Aggregate<Filter, FilteringExpression>(null, (currentExpression, filter) =>
             {
-                if(currentExpression == null)
+                if (currentExpression == null)
                 {
                     return filter.ToFilteringExpression(parameterExpression);
                 }
