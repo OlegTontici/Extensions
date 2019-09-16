@@ -60,34 +60,25 @@ namespace Extensions.IQueryable.Tests
         [TestMethod]
         public void Should_Correctly_Paginate_ProvidedData()
         {
-            //// Act
-            //var paginatedQuery = cars.AsQueryable().Paginated(new PaginationInfo(2, 2));
-            //var result = paginatedQuery.ToList();
+            // Act
+            var paginatedQuery = cars.AsQueryable().Paginated(new PaginationInfo(2, 2));
+            var result = paginatedQuery.ToList();
 
-            //// Assert
-            //Assert.IsTrue(result.SequenceEqual(new List<Car> { cars.Last() }));
+            // Assert
+            Assert.IsTrue(result.SequenceEqual(new List<Car> { cars.Last() }));
         }
 
         #region type string
         [TestMethod]
         public void Should_Correctly_Apply_Equal_Filter_On_String_Type()
         {
-
-            //var scopedFilter = new ScopedFilter(LogicalConnection.Or, 
-            //    new SimpleFilter("Name", FilteringOperator.Equal, "SearchValue"), 
-            //    new SimpleFilter("Name2", FilteringOperator.NotEqual, "SearchValue2", LogicalConnection.Or),
-            //    new SimpleFilter("Name2", FilteringOperator.Equal, "BlaBLa"));
-
-            //var paramExpression = Expression.Parameter(typeof(FakeClass), "x");
-
-            //scopedFilter.ToExpression(paramExpression);
             //Act
 
-            var result = cars.FilterBy(
-                new SimpleFilter(LogicalConnection.Or, nameof(Car.Make), FilteringOperator.Equal, bmw.Make),
-                new ScopedFilter(LogicalConnection.Or, new SimpleFilter(LogicalConnection.And, nameof(Car.Make), FilteringOperator.Equal, toyota.Make),
-                                                        new SimpleFilter(LogicalConnection.And, nameof(Car.Price), FilteringOperator.Equal, 200)), 
-                new SimpleFilter(LogicalConnection.And, nameof(Car.Make), FilteringOperator.Contains, "R")).ToList();
+            var filter = new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, bmw.Make)
+                .Or(new ScopedFilter(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, toyota.Make).And(new SimpleFilter(nameof(Car.Price), FilteringOperator.Equal, 20001))))
+                .And(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, renault.Make));
+
+            var result = cars.FilterBy(filter).ToList();
 
             //    var result = cars.FilterBy(new Filter(nameof(Car.Make), FilteringOperator.Equal, bmw.Make, LogicalConnection.Or),
             //new Filter(nameof(Car.Make), FilteringOperator.Equal, toyota.Make, LogicalConnection.And),

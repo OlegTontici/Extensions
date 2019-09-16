@@ -5,31 +5,64 @@ using System.Linq.Expressions;
 
 namespace Extensions.IQueryable.Filtering
 {
-    public abstract class Filter
+    public interface IFiltersCollection
     {
+        FilterCollection Or(Filter filter);
+        FilterCollection And(Filter filter);
+    }
+
+    public class FilterCollection : IFiltersCollection
+    {
+        public Filter[] Filters => _filters.ToArray();
+        private List<Filter> _filters;
+
+        public FilterCollection(Filter filter1, Filter filter2)
+        {
+            _filters = new List<Filter>()
+            {
+                filter1,
+                filter2
+            };
+        }
+
+        public FilterCollection And(Filter filter)
+        {
+            var lastFilter = _filters.LastOrDefault();
+            _filters.Remove(lastFilter);
+            _filters.Add(lastFilter.WithLogicalConnection(LogicalConnection.And));
+            _filters.Add(filter);
+            return this;
+        }
+
+        public FilterCollection Or(Filter filter)
+        {
+            var lastFilter = _filters.LastOrDefault();
+            _filters.Remove(lastFilter);
+            _filters.Add(lastFilter.WithLogicalConnection(LogicalConnection.Or));
+            _filters.Add(filter);
+            return this;
+        }
+
+        public static implicit operator Filter[] (FilterCollection filterCollection)
+        {
+            return filterCollection.Filters;
+        }
+    }
+
+    public abstract class Filter : IFiltersCollection
+    {
+        public FilterCollection And(Filter filter)
+        {
+            return new FilterCollection(this.WithLogicalConnection(LogicalConnection.And), filter);
+        }
+
+        public FilterCollection Or(Filter filter)
+        {
+            return new FilterCollection(this.WithLogicalConnection(LogicalConnection.Or), filter);
+        }
+
         public abstract FilteringExpression ToFilteringExpression(ParameterExpression parameterExpression);
-
-        public static SimpleFilter Simple(LogicalConnection logicalConnection, string propertyName, FilteringOperator filteringOperator, object searchValue)
-        {
-            return new SimpleFilter(logicalConnection, propertyName, filteringOperator, searchValue);
-        }
-        public static SimpleFilter Simple(string propertyName, FilteringOperator filteringOperator, object searchValue)
-        {
-            return new SimpleFilter(propertyName, filteringOperator, searchValue);
-        }
-        public static SimpleFilter Simple(string logicalConnection, string propertyName, string filteringOperator, object searchValue)
-        {
-            return new SimpleFilter(logicalConnection, propertyName, filteringOperator, searchValue);
-        }
-        public static SimpleFilter Simple(string propertyName, string filteringOperator, object searchValue)
-        {
-            return new SimpleFilter(propertyName, filteringOperator, searchValue);
-        }
-
-        public static ScopedFilter Scoped(LogicalConnection logicalConnection, params SimpleFilter[] filters)
-        {
-            return new ScopedFilter(logicalConnection, filters);
-        }
+        public abstract Filter WithLogicalConnection(LogicalConnection logicalConnection);
     }
 
     public class SimpleFilter : Filter
@@ -132,6 +165,11 @@ namespace Extensions.IQueryable.Filtering
             return filteringExpression;
         }
 
+        public override Filter WithLogicalConnection(LogicalConnection logicalConnection)
+        {
+            return new SimpleFilter(logicalConnection, PropertyName, Operator, SearchValue);
+        }
+
         // TODO to add support for string to guid conversion
         private static readonly Dictionary<Type, IEnumerable<Type>> TypesSupportedConversion = new Dictionary<Type, IEnumerable<Type>>
         {
@@ -147,11 +185,17 @@ namespace Extensions.IQueryable.Filtering
     public class ScopedFilter : Filter
     {
         public LogicalConnection LogicalConnection { get; }
-        public IEnumerable<SimpleFilter> Filters { get; }
+        public IEnumerable<Filter> Filters { get; }
 
-        public ScopedFilter(LogicalConnection logicalConnection, params SimpleFilter[] filters)
+        public ScopedFilter(LogicalConnection logicalConnection, params Filter[] filters)
         {
             LogicalConnection = logicalConnection;
+            Filters = filters;
+        }
+
+        public ScopedFilter(params Filter[] filters)
+        {
+            LogicalConnection = LogicalConnection.And;
             Filters = filters;
         }
 
@@ -173,6 +217,11 @@ namespace Extensions.IQueryable.Filtering
             }
 
             return filteringExpression.WithLogicalConnection(LogicalConnection.GetExpression());
+        }
+
+        public override Filter WithLogicalConnection(LogicalConnection logicalConnection)
+        {
+            return new ScopedFilter(logicalConnection, Filters.ToArray());
         }
     }
 }

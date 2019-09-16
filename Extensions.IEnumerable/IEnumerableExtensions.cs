@@ -8,17 +8,17 @@ namespace Extensions.IEnumerable
 {
     public static class IEnumerableExtensions
     {
-        public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> selector)
+        public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> childrenSelector)
         {
             foreach (var item in source)
             {
                 yield return item;
 
-                var children = selector(item);
+                var children = childrenSelector(item);
 
                 if (children != null)
                 {
-                    foreach (var child in children.SelectManyRecursive(selector))
+                    foreach (var child in children.SelectManyRecursive(childrenSelector))
                     {
                         yield return child;
                     }
