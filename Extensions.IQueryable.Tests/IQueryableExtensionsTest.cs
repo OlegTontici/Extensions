@@ -15,14 +15,14 @@ namespace Extensions.IQueryable.Tests
         public string Make { get; set; }
         public DateTime ProductionDate { get; set; }
         public bool IsSecondHand { get; set; }
+        public Engine Engine { get; set; }
+    }
 
-        public bool Equals(Car obj)
-        {
-            return obj != null &&
-                Price == obj.Price &&
-                Make == obj.Make &&
-                ProductionDate == obj.ProductionDate;
-        }
+    public class Engine
+    {
+        public double Volume { get; set; }
+        public int HorsePowers { get; set; }
+        public DateTime ProductionDate { get; set; }
     }
 
     [TestClass]
@@ -34,7 +34,13 @@ namespace Extensions.IQueryable.Tests
             Make = "BMW",
             Price = 15000,
             ProductionDate = new DateTime(2018, 04, 04),
-            IsSecondHand = true
+            IsSecondHand = true,
+            Engine = new Engine
+            {
+                HorsePowers = 180,
+                Volume = 2.2,
+                ProductionDate = new DateTime(2019, 09, 16)
+            }
         };
         private static readonly Car toyota = new Car
         {
@@ -42,7 +48,13 @@ namespace Extensions.IQueryable.Tests
             Make = "Toyota",
             Price = 20000,
             ProductionDate = new DateTime(2017, 04, 04),
-            IsSecondHand = false
+            IsSecondHand = false,
+            Engine = new Engine
+            {
+                HorsePowers = 160,
+                Volume = 2.5,
+                ProductionDate = new DateTime(2019, 09, 10)
+            }
         };
         private static readonly Car renault = new Car
         {
@@ -50,7 +62,7 @@ namespace Extensions.IQueryable.Tests
             Make = "Renault",
             Price = 6000,
             ProductionDate = new DateTime(2014, 04, 04),
-            IsSecondHand = true
+            IsSecondHand = true            
         };
         private static IQueryable<Car> cars = new List<Car>
         {
@@ -74,10 +86,11 @@ namespace Extensions.IQueryable.Tests
         {
             //Act
 
-            var filter = new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, bmw.Make)
-                .Or(new ScopedFilter(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, toyota.Make).And(new SimpleFilter(nameof(Car.Price), FilteringOperator.Equal, 20001))))
-                .And(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, renault.Make));
-
+            //var filter = new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, bmw.Make)
+            //    .Or(new ScopedFilter(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, toyota.Make).And(new SimpleFilter(nameof(Car.Price), FilteringOperator.Equal, 20001))))
+            //    .Or(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, renault.Make));
+            var filter = new SimpleFilter($"{nameof(Car.Engine)}.{nameof(Car.Engine.ProductionDate)}", FilteringOperator.Equal, new DateTime(2019, 09, 16))
+                .Or(new SimpleFilter(nameof(Car.Make), FilteringOperator.Equal, renault.Make));
             var result = cars.FilterBy(filter).ToList();
 
             //    var result = cars.FilterBy(new Filter(nameof(Car.Make), FilteringOperator.Equal, bmw.Make, LogicalConnection.Or),

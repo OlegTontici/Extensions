@@ -123,15 +123,9 @@ namespace Extensions.IQueryable.Filtering
 
         private Expression GetFilteringExpression(ParameterExpression parameterExpression)
         {
-            var typeDoesNotContainTargetProperty = parameterExpression.Type.GetProperty(PropertyName) == null;
+            var memberAccessInfo = GetMemberAccessInfo(parameterExpression);
 
-            if (typeDoesNotContainTargetProperty)
-            {
-                throw new ArgumentException($"Property '{PropertyName}' does not exist on the type {parameterExpression.Type.FullName}");
-            }
-
-
-            var targetPropertyType = parameterExpression.Type.GetProperty(PropertyName).PropertyType;
+            var targetPropertyType = memberAccessInfo.MemberAccessExpression.Type;
 
             var searchValue = SearchValue;
 
@@ -157,12 +151,72 @@ namespace Extensions.IQueryable.Filtering
                 }
             }
 
-            var memberAccessExpression = Expression.Property(parameterExpression, PropertyName);
             var searchValueExpression = Expression.Constant(searchValue);
+            var filteringExpression = Operator.ToExpression(memberAccessInfo.MemberAccessExpression, searchValueExpression);            
 
-            var filteringExpression = Operator.ToExpression(memberAccessExpression, searchValueExpression);
+            if(memberAccessInfo.ChecksAgainsNullExpression != null)
+            {
+                return Expression.AndAlso(memberAccessInfo.ChecksAgainsNullExpression, filteringExpression);
+            }
 
             return filteringExpression;
+        }
+
+        private MemberAccessInfo GetMemberAccessInfo(ParameterExpression parameterExpression)
+        {
+            var splittedPropertyNames = this.PropertyName.Split('.');           
+
+            var memberAccessExpression = splittedPropertyNames.Aggregate<string, MemberAccessInfo>(null, (currentMemberAccessExpression, currentProperty) => 
+            {
+                if(currentMemberAccessExpression == null)
+                {
+                    var typeDoesNotContainTargetProperty = parameterExpression.Type.GetProperty(currentProperty) == null;
+                    if (typeDoesNotContainTargetProperty)
+                    {
+                        throw new ArgumentException($"Property '{PropertyName}' does not exist on the type {parameterExpression.Type.FullName}");
+                    }
+
+                    var memberExpression = Expression.Property(parameterExpression, currentProperty);
+                    var result = new MemberAccessInfo
+                    {
+                        MemberAccessExpression = memberExpression
+                    };
+                    return result;
+                }
+
+                var typeDoesNotContainTargetProperty2 = currentMemberAccessExpression.MemberAccessExpression.Type.GetProperty(currentProperty) == null;
+                if (typeDoesNotContainTargetProperty2)
+                {
+                    throw new ArgumentException($"Property '{PropertyName}' does not exist on the type {parameterExpression.Type.FullName}");
+                }
+
+                var memberExpression2 = Expression.Property(currentMemberAccessExpression.MemberAccessExpression, currentProperty);
+                var checkAgainstNullExpression = currentMemberAccessExpression.ChecksAgainsNullExpression;
+
+                var currentMemberIsNullable = currentMemberAccessExpression.MemberAccessExpression.Type.IsClass
+                || (currentMemberAccessExpression.MemberAccessExpression.Type.IsValueType && Nullable.GetUnderlyingType(currentMemberAccessExpression.MemberAccessExpression.Type) != null);
+
+                if (currentMemberIsNullable)
+                {
+                    var notNullExpression = Expression.NotEqual(currentMemberAccessExpression.MemberAccessExpression, Expression.Constant(null));    
+                    if(checkAgainstNullExpression == null)
+                    {
+                        checkAgainstNullExpression = notNullExpression;
+                    }
+                    else
+                    {
+                        checkAgainstNullExpression = Expression.AndAlso(checkAgainstNullExpression, notNullExpression);
+                    }
+                }
+
+                return new MemberAccessInfo
+                {
+                    MemberAccessExpression = memberExpression2,
+                    ChecksAgainsNullExpression = checkAgainstNullExpression
+                };
+            });
+
+            return memberAccessExpression;
         }
 
         public override Filter WithLogicalConnection(LogicalConnection logicalConnection)
@@ -180,6 +234,17 @@ namespace Extensions.IQueryable.Filtering
             { typeof(DateTime), new List<Type> { typeof(string) } },
             { typeof(Guid), new List<Type> { typeof(string) } }
         };
+
+        private class MemberAccessInfo
+        {
+            public MemberAccessInfo()
+            {
+                ChecksAgainsNullExpression = null;
+            }
+
+            public Expression ChecksAgainsNullExpression { get; set; }
+            public MemberExpression MemberAccessExpression { get; set; }
+        }
     }
 
     public class ScopedFilter : Filter
