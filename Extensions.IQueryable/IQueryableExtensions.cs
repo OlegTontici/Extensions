@@ -31,7 +31,7 @@ namespace Extensions.IQueryable
                     return filter.ToFilteringExpression(parameterExpression);
                 }
 
-                var expression = currentExpression.ConnectTo(filter.ToFilteringExpression(parameterExpression), parameterExpression);
+                var expression = currentExpression.ConnectTo(filter.ToFilteringExpression(parameterExpression));
 
                 return expression;
             });

@@ -13,7 +13,7 @@ namespace Extensions.IQueryable.Filtering
             LogicalConnection = logicalConnection;
         }
 
-        public FilteringExpression ConnectTo(FilteringExpression filter, ParameterExpression parameterExpression)
+        public FilteringExpression ConnectTo(FilteringExpression filter)
         {
             var expression = LogicalConnection(Expression, filter.Expression);
 

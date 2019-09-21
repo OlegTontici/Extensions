@@ -152,9 +152,9 @@ namespace Extensions.IQueryable.Filtering
             }
 
             var searchValueExpression = Expression.Constant(searchValue);
-            var filteringExpression = Operator.ToExpression(memberAccessInfo.MemberAccessExpression, searchValueExpression);            
+            var filteringExpression = Operator.ToExpression(memberAccessInfo.MemberAccessExpression, searchValueExpression);
 
-            if(memberAccessInfo.ChecksAgainsNullExpression != null)
+            if (memberAccessInfo.ChecksAgainsNullExpression != null)
             {
                 return Expression.AndAlso(memberAccessInfo.ChecksAgainsNullExpression, filteringExpression);
             }
@@ -164,11 +164,11 @@ namespace Extensions.IQueryable.Filtering
 
         private MemberAccessInfo GetMemberAccessInfo(ParameterExpression parameterExpression)
         {
-            var splittedPropertyNames = this.PropertyName.Split('.');           
+            var splittedPropertyNames = this.PropertyName.Split('.');
 
-            var memberAccessExpression = splittedPropertyNames.Aggregate<string, MemberAccessInfo>(null, (currentMemberAccessExpression, currentProperty) => 
+            var memberAccessExpression = splittedPropertyNames.Aggregate<string, MemberAccessInfo>(null, (currentMemberAccessExpression, currentProperty) =>
             {
-                if(currentMemberAccessExpression == null)
+                if (currentMemberAccessExpression == null)
                 {
                     var typeDoesNotContainTargetProperty = parameterExpression.Type.GetProperty(currentProperty) == null;
                     if (typeDoesNotContainTargetProperty)
@@ -198,8 +198,8 @@ namespace Extensions.IQueryable.Filtering
 
                 if (currentMemberIsNullable)
                 {
-                    var notNullExpression = Expression.NotEqual(currentMemberAccessExpression.MemberAccessExpression, Expression.Constant(null));    
-                    if(checkAgainstNullExpression == null)
+                    var notNullExpression = Expression.NotEqual(currentMemberAccessExpression.MemberAccessExpression, Expression.Constant(null));
+                    if (checkAgainstNullExpression == null)
                     {
                         checkAgainstNullExpression = notNullExpression;
                     }
@@ -278,7 +278,7 @@ namespace Extensions.IQueryable.Filtering
                     continue;
                 }
 
-                filteringExpression = filteringExpression.ConnectTo(currentExpression, parameterExpression);
+                filteringExpression = filteringExpression.ConnectTo(currentExpression);
             }
 
             return filteringExpression.WithLogicalConnection(LogicalConnection.GetExpression());
